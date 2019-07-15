@@ -16,28 +16,25 @@ Created on Fri May 17 13:04:06 2019
 
 import math
 import random
+import numpy as np
 import statistics
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 
-# number of repetitions for simulations
-M = 50
+origin = np.array((0,0))
+M = 7
 
-# calculate distance of a point x,y to origin 0,0
-def distance_to0(x,y):
-    return math.sqrt(x ** 2 + y ** 2)
 
-# simulate pi with n dots in a 1x1 square, calculate number of points within range = 1
 def approximate_pi(n):
     hits = 0
     for i in range(n):
-        x,y = random.random(), random.random()
-        if distance_to0(x,y) <= 1: 
+        point = np.array((random.random(), random.random()))
+        if np.linalg.norm(point - origin) <= 1:
             hits += 1
     return (hits/n) * 4
 
 
 def main():
-    # use points in powers of 2 times 1000 (1000~128000)
     points = [1000 * (2 ** i) for i in range(0,8)]
 
     plt.xscale("log")
@@ -47,28 +44,29 @@ def main():
 
     for i in points:
         collect = []
-        
-        # repeat simulation M times with given number of points
         for j in range(M):
             collect.append(approximate_pi(i))
 
         mean = statistics.mean(collect)
         stdev = statistics.stdev(collect)
 
-        # 95% confidence interval
-        lower_limit = mean - 1.96 * stdev
-        upper_limit = mean + 1.96 * stdev
+        # TODO: 95% confidence interval? ok with this?
+        lower_limit = mean - 2 * stdev
+        upper_limit = mean + 2 * stdev
 
         plt.plot((i, i), (lower_limit, upper_limit), 'b-')
-        
         print("Points: " + str(i) + ", mean: " + str(mean) + ", stdev: " + str(stdev))
+
+        #print("plotted: " + str(lower_limit) + " to " + str(upper_limit))
+        #prob = norm.cdf(x=mean + 2 * stdev, loc=mean, scale=stdev) \
+        #       - norm.cdf(x=mean - 2 * stdev, loc=mean, scale=stdev)
+        #print(prob)
 
         means.append(mean)
 
     plt.plot(points, means, 'b-')
     plt.title("Simulating PI, M = " + str(M))
     plt.show()
-    
 
 if __name__ == "__main__":
     main()

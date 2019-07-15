@@ -45,14 +45,3 @@ if __name__ == "__main__":
 
     print("\n\n--Encoded result--\n", encoded)
 
-    a, b = 1, 1
-    encoded = kadai11.encode(text, a, b)
-    decoded = kadai11.decode(encoded, a, b)
-    cracked, _, _, _ = kadai11.decrypt_frequency_analysis(encoded, dic, kadai11.DEPTH)
-    print("a,b = 1,1 decryption using keys, Success:", decoded == text)
-    print("a,b = 1,1 decryption character frequency analysis, Success:", cracked == text)
-
-    print("---")
-
-    print(encoded)
-
